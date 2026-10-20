@@ -1,0 +1,26 @@
+#include<rclcpp/rclcpp.hpp>
+#include<my_ros_msg/msg/ros.hpp>
+using namespace std;
+
+class dy :public rclcpp::Node{
+    public:
+    dy():Node("nailong"){
+        sub = this->create_subscription<my_ros_msg::msg::Ros>(
+            "robot_my",
+            10,
+            [this](my_ros_msg::msg::Ros::SharedPtr msg){RCLCPP_WARN_STREAM(this->get_logger(),"收到消息：" << msg->ros_name);}
+        );
+        RCLCPP_WARN_STREAM(this->get_logger(),"dagoufen");
+    }
+    private:
+    rclcpp::Subscription<my_ros_msg::msg::Ros>::SharedPtr sub;
+    void sub_callback(my_ros_msg::msg::Ros::SharedPtr msg){
+        RCLCPP_WARN_STREAM(this->get_logger(),"收到消息：" << msg->ros_name);
+    }
+};
+int main(int argc,char** argv){
+    rclcpp::init(argc,argv);
+    rclcpp::spin(make_shared<dy>());
+    rclcpp::shutdown();
+    return 0;
+}
