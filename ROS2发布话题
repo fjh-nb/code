@@ -1,0 +1,34 @@
+#include<rclcpp/rclcpp.hpp>
+#include<my_ros_msg/msg/ros.hpp>
+#include<chrono>
+using namespace std;
+
+class jk :public rclcpp::Node{
+    public:
+    jk():Node("abab"){
+        pub = this->create_publisher<my_ros_msg::msg::Ros>("robot_my",10);
+
+        timer = this->create_wall_timer(chrono::seconds(1),[this](){ this->timer_callback();});
+    }
+
+    private:
+    rclcpp::Publisher<my_ros_msg::msg::Ros>::SharedPtr pub;
+    rclcpp::TimerBase::SharedPtr timer;
+    void timer_callback(){
+        auto msgs = my_ros_msg::msg::Ros();
+        msgs.ros_name = "潘";
+        msgs.ros_speed = 1.5;
+        msgs.ros_min = 88;
+        msgs.ros_max = 888;
+         pub->publish(msgs);
+        RCLCPP_INFO_STREAM(this->get_logger(), "发出状态: " << msgs.ros_name);
+        RCLCPP_INFO_STREAM(this->get_logger(), "发出速度: " << msgs.ros_speed);
+    }
+};
+
+int main(int argc, char ** argv) {
+    rclcpp::init(argc, argv);
+    rclcpp::spin(std::make_shared<jk>());
+    rclcpp::shutdown();
+    return 0;
+}
